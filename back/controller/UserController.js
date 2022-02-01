@@ -6,14 +6,22 @@ function createUser(req, res) {
     const data = req.body;
     
     try {
-        UserModel.create({
-            nome: data.nome, apelido: data.apelido, email: data.email,
-            password: bcrypt.hashSync(data.password), funcao: data.funcao
-        }, (erro, user_data) => {
-            if (user_data) {
-                res.status(201).send({ message: "Usuário cadastrado com sucesso!", user: user_data });
+        UserModel.findOne({ email: data.email }, (erro, exists) => {
+            if (!exists) {
+
+                UserModel.create({
+                    nome: data.nome, apelido: data.apelido, email: data.email,
+                    password: bcrypt.hashSync(data.password), funcao: data.funcao
+                }, (erro, user_data) => {
+                    if (user_data) {
+                        res.status(201).send({ message: "Usuário cadastrado com sucesso!", user: user_data });
+                    } else {
+                        res.status(204).send({ message: "Não foi possível cadastrar o usuário!" });
+                    }
+                });
+
             } else {
-                res.status(204).send({ message: "Não foi possível cadastrar o usuário!" });
+                res.status(200).send({ message: "Usuário já cadastrad!" });
             }
         });
     } catch (erro) {
