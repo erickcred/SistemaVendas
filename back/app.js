@@ -24,9 +24,11 @@ const UserRouter = require("./routes/user");
 const CategoriaRouter = require("./routes/categoria");
 const ClienteRouter = require("./routes/cliente");
 const ProdutoRouter = require("./routes/produto");
+const VendaRouter = require("./routes/venda");
 app.use("/", UserRouter);
 app.use("/", CategoriaRouter);
 app.use("/", ClienteRouter);
 app.use("/", ProdutoRouter);
+app.use("/", VendaRouter);
 
 module.exports = app;
