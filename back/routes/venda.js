@@ -1,4 +1,4 @@
-const express = reuire("express");
+const express = require("express");
 const router = express.Router();
 
 const VendaController = require("../controller/VendaController");
