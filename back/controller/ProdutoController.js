@@ -1,6 +1,7 @@
 const ProdutoModel = require("../models/produto");
 const fs = require("fs");
-const pathImagem = "./uploads/produto/images"
+const path = require("path");
+const pathImagem = "./uploads/produto/images";
 
 function createProduto(req, res) {
     const data = req.body;
@@ -32,15 +33,15 @@ function createProduto(req, res) {
 
 function findAllProduto(req, res) {
     try {
-        ProdutoModel.find((erro, produto_data) => {
-            if (produto_data && produto_data != "") {
+        ProdutoModel.find().populate("idCategoria").exec((erro, produto_data) => {
+            if (produto_data) {
                 res.status(200).send({ message: "Lista", produto: produto_data });
             } else {
-                res.status(404).send({ message: "Não há registro de produtos!" });
+                res.status(404).send({ message: "Não há regostros!" });
             }
         });  
     } catch (erro) {
-        res.status(500).send({ message: "Não foi possível conectar ao Servidor!" });
+        res.status(500).send({ message: "Não foi possível conectar ao Servidor! " + erro });
     }
 }
 
@@ -48,7 +49,7 @@ function findByIdProduto(req, res) {
     const id = req.params.id;
 
     try {
-        ProdutoModel.findById(id, (erro, produto_data) => {
+        ProdutoModel.findById(id).populate("idCategoria").exec((erro, produto_data)  => {
             if (produto_data) {
                 res.status(200).send({ message: "Lista", produto: produto_data });
             } else {
@@ -57,6 +58,19 @@ function findByIdProduto(req, res) {
         });  
     } catch (erro) {
         res.status(500).send({ message: "Não foi possível conectar ao Servidor!" });
+    }
+}
+
+function getImagem(req, res) {
+    const imagem = req.params.imagem;
+    let pathImg = "";
+
+    if (imagem != null) {
+        pathImg = `${pathImagem}/${imagem}`;
+        res.status(200).sendFile(path.resolve(pathImg));
+    } else {
+        pathImg = `${pathImagem}/default.jpg`;
+        res.status(200).sendFile(path.resolve(pathImg));
     }
 }
 
@@ -143,6 +157,7 @@ module.exports = {
     createProduto,
     findAllProduto,
     findByIdProduto,
+    getImagem,
     updateProduto,
     updateEstoque,
     deleteProduto
